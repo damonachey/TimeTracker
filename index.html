@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #add-tracker, #reset-trackers {
+            display: inline-block;
+            margin: 5px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button {
+            display: block;
+            margin: 5px 0;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: left;
+        }
+        .tracker {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+        .tracker-button {
+            background-color: gray;
+            color: white;
+            border: none;
+            flex-grow: 1;
+            text-align: left;
+            margin-right: 10px;
+        }
+        .tracker-button.running {
+            background-color: green;
+        }
+        .remove-button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Time Tracker</h1>
+    <button id="add-tracker">+ Add Tracker</button>
+    <button id="reset-trackers" style="float: right;">Reset All</button>
+    <div id="trackers-container"></div>
+
+    <script>
+        let trackers = [];
+        let activeTracker = null;
+
+        // Load trackers from local storage on page load
+        window.onload = () => {
+            const savedTrackers = JSON.parse(localStorage.getItem('trackers')) || [];
+            savedTrackers.forEach(savedTracker => {
+                const tracker = {
+                    id: savedTracker.id,
+                    name: savedTracker.name,
+                    element: document.createElement('div'),
+                    startTime: savedTracker.startTime,
+                    elapsed: savedTracker.startTime != null ? elapsed(savedTracker.startTime) : savedTracker.elapsed,
+                };
+
+                createTrackerElement(tracker);
+                trackers.push(tracker);
+                updateTrackerText(tracker);
+
+                // Resume tracking if it was active
+                if (tracker.startTime) {
+                    resumeTracker(tracker);
+                }
+            });
+
+            setInterval(() => {
+                trackers.forEach(updateTrackerText);
+            }, 1000);
+        };
+
+        document.getElementById('add-tracker').addEventListener('click', () => {
+            const name = prompt("Enter tracker name:");
+            if (!name) return; // Exit if no name is entered
+
+            const tracker = {
+                id: Date.now(),
+                name: name,
+                element: document.createElement('div'),
+                startTime: null,
+                elapsed: 0,
+            };
+
+            createTrackerElement(tracker);
+            trackers.push(tracker);
+            saveTrackersToLocalStorage();
+        });
+
+        document.getElementById('reset-trackers').addEventListener('click', () => {
+            if (confirm("Are you sure you want to reset all trackers to zero?")) {
+                trackers.forEach(tracker => {
+                    tracker.elapsed = 0;
+                    tracker.startTime = null;
+                    tracker.button.classList.remove('running');
+                    updateTrackerText(tracker);
+                });
+                activeTracker = null;
+                saveTrackersToLocalStorage();
+            }
+        });
+
+        function createTrackerElement(tracker) {
+            tracker.element.className = 'tracker';
+
+            const trackerButton = document.createElement('button');
+            trackerButton.className = 'tracker-button';
+            trackerButton.innerHTML = `<span>0:00 - ${tracker.name}</span>`;
+            trackerButton.addEventListener('click', () => handleTrackerClick(tracker));
+
+            const removeButton = document.createElement('button');
+            removeButton.className = 'remove-button';
+            removeButton.textContent = 'Remove';
+            removeButton.addEventListener('click', () => handleRemoveTracker(tracker));
+
+            tracker.element.appendChild(trackerButton);
+            tracker.element.appendChild(removeButton);
+
+            tracker.button = trackerButton;
+            document.getElementById('trackers-container').appendChild(tracker.element);
+        }
+
+        function handleTrackerClick(tracker) {
+            // Pause the currently active tracker
+            if (activeTracker && activeTracker !== tracker) {
+                pauseTracker(activeTracker);
+            }
+
+            // Toggle the clicked tracker
+            if (tracker.startTime) {
+                pauseTracker(tracker);
+            } else {
+                startTracker(tracker);
+            }
+
+            saveTrackersToLocalStorage();
+        }
+
+        function startTracker(tracker) {
+            tracker.startTime = Date.now();
+            activeTracker = tracker;
+            tracker.button.classList.add('running');
+            updateTrackerText(tracker);
+        }
+
+        function pauseTracker(tracker) {
+            if (tracker.startTime) {
+                tracker.elapsed += elapsed(tracker.startTime);
+                tracker.startTime = null;
+            }
+            tracker.button.classList.remove('running');
+            activeTracker = null;
+            updateTrackerText(tracker);
+        }
+
+        function resumeTracker(tracker) {
+            if (tracker.startTime) {
+                startTracker(tracker);
+            }
+        }
+
+        function elapsed(startTime) {
+            return Math.floor((Date.now() - startTime) / 1000);
+        }
+
+        function handleRemoveTracker(tracker) {
+            if (confirm(`Are you sure you want to remove the tracker: ${tracker.name}?`)) {
+                if (tracker === activeTracker) {
+                    activeTracker = null;
+                }
+                tracker.element.remove();
+                trackers = trackers.filter(t => t !== tracker);
+                saveTrackersToLocalStorage();
+            }
+        }
+
+        function updateTrackerText(tracker) {
+            const elapsed = tracker.elapsed + (tracker.startTime ? Math.floor((Date.now() - tracker.startTime) / 1000) : 0);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            tracker.button.innerHTML = `<span>${minutes}:${seconds.toString().padStart(2, '0')} - ${tracker.name}</span>`;
+        }
+
+        function saveTrackersToLocalStorage() {
+            const dataToSave = trackers.map(tracker => ({
+                id: tracker.id,
+                name: tracker.name,
+                elapsed: tracker.elapsed,
+                startTime: tracker.startTime
+            }));
+            localStorage.setItem('trackers', JSON.stringify(dataToSave));
+        }
+    </script>
+</body>
+</html>
