@@ -192,10 +192,10 @@
         }
 
         function updateTrackerText(tracker) {
-            const elapsed = tracker.elapsed + (tracker.startTime ? elapsed(tracker.startTime) : 0);
+            const totalElapsed = tracker.elapsed + (tracker.startTime ? elapsed(tracker.startTime) : 0);
             const hours = Math.floor(totalElapsed / 3600);
             const minutes = Math.floor((totalElapsed % 3600) / 60);
-            const seconds = elapsed % 60;
+            const seconds = totalElapsed % 60;
             tracker.button.innerHTML = `<span>${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} - ${tracker.name}</span>`;
         }
 
