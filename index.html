@@ -69,7 +69,7 @@
                     name: savedTracker.name,
                     element: document.createElement('div'),
                     startTime: savedTracker.startTime,
-                    elapsed: savedTracker.startTime != null ? elapsed(savedTracker.startTime) : savedTracker.elapsed,
+                    elapsed: savedTracker.elapsed,
                 };
 
                 createTrackerElement(tracker);
@@ -162,7 +162,7 @@
 
         function pauseTracker(tracker) {
             if (tracker.startTime) {
-                tracker.elapsed += elapsed(tracker.startTime);
+                tracker.elapsed += Date.now() - tracker.startTime;
                 tracker.startTime = null;
             }
             tracker.button.classList.remove('running');
@@ -174,10 +174,6 @@
             if (tracker.startTime) {
                 startTracker(tracker);
             }
-        }
-
-        function elapsed(startTime) {
-            return Math.floor((Date.now() - startTime) / 1000);
         }
 
         function handleRemoveTracker(tracker) {
@@ -192,7 +188,7 @@
         }
 
         function updateTrackerText(tracker) {
-            const totalElapsed = tracker.elapsed + (tracker.startTime ? elapsed(tracker.startTime) : 0);
+            const totalElapsed = tracker.elapsed + (tracker.startTime ? Date.now() - tracker.startTime : 0);
             const hours = Math.floor(totalElapsed / 3600);
             const minutes = Math.floor((totalElapsed % 3600) / 60);
             const seconds = totalElapsed % 60;
