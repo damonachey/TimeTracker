@@ -154,7 +154,7 @@
         }
 
         function startTracker(tracker) {
-            tracker.startTime = Date.now();
+            tracker.startTime = tracker.startTime ?? Date.now();
             activeTracker = tracker;
             tracker.button.classList.add('running');
             updateTrackerText(tracker);
@@ -188,10 +188,16 @@
         }
 
         function updateTrackerText(tracker) {
+            console.log(new Date(tracker.startTime).toLocaleTimeString());
+            console.log(tracker.elapsed);
+
             const totalElapsed = tracker.elapsed + (tracker.startTime ? Date.now() - tracker.startTime : 0);
-            const hours = Math.floor(totalElapsed / 3600);
-            const minutes = Math.floor((totalElapsed % 3600) / 60);
-            const seconds = totalElapsed % 60;
+            const totalElapsedInSeconds = Math.floor(totalElapsed / 1000);
+
+            const hours = Math.floor(totalElapsedInSeconds / 3600);
+            const minutes = Math.floor((totalElapsedInSeconds % 3600) / 60);
+            const seconds = totalElapsedInSeconds % 60;
+
             tracker.button.innerHTML = `<span>${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} - ${tracker.name}</span>`;
         }
 
