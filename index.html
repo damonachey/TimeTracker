@@ -188,9 +188,6 @@
         }
 
         function updateTrackerText(tracker) {
-            console.log(new Date(tracker.startTime).toLocaleTimeString());
-            console.log(tracker.elapsed);
-
             const totalElapsed = tracker.elapsed + (tracker.startTime ? Date.now() - tracker.startTime : 0);
             const totalElapsedInSeconds = Math.floor(totalElapsed / 1000);
 
