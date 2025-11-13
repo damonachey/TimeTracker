@@ -8,6 +8,7 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #f5f5f5;
         }
         #add-tracker, #reset-trackers {
             display: inline-block;
@@ -15,6 +16,14 @@
             padding: 10px;
             font-size: 16px;
             cursor: pointer;
+            border-radius: 5px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+        }
+        #reset-trackers {
+            background-color: #e8e8e8;
+            color: #333;
         }
         button {
             display: block;
@@ -23,6 +32,7 @@
             font-size: 16px;
             cursor: pointer;
             text-align: left;
+            border-radius: 5px;
         }
         .tracker {
             display: flex;
@@ -31,22 +41,24 @@
             margin: 5px 0;
         }
         .tracker-button {
-            background-color: gray;
+            background-color: #6c757d;
             color: white;
             border: none;
             flex-grow: 1;
             text-align: left;
             margin-right: 10px;
+            border-radius: 5px;
         }
         .tracker-button.running {
-            background-color: green;
+            background-color: #28a745;
         }
         .remove-button {
-            background-color: red;
+            background-color: #dc3545;
             color: white;
             border: none;
             padding: 5px 10px;
             cursor: pointer;
+            border-radius: 5px;
         }
     </style>
 </head>
