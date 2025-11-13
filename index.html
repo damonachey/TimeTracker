@@ -49,6 +49,7 @@
             align-items: center;
             justify-content: space-between;
             margin: 5px 0;
+            gap: 10px;
         }
         .tracker-button {
             background-color: #6c757d;
@@ -56,19 +57,32 @@
             border: none;
             flex-grow: 1;
             text-align: left;
-            margin-right: 10px;
             border-radius: 5px;
         }
         .tracker-button.running {
             background-color: #28a745;
         }
-        .remove-button {
-            background-color: #dc3545;
-            color: white;
+        .edit-button {
+            background: none;
             border: none;
-            padding: 5px 10px;
             cursor: pointer;
-            border-radius: 5px;
+            font-size: 20px;
+            padding: 5px;
+            color: #666;
+        }
+        .edit-button:hover {
+            color: #4a90e2;
+        }
+        .remove-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            padding: 5px;
+            color: #666;
+        }
+        .remove-button:hover {
+            color: #dc3545;
         }
     </style>
 </head>
@@ -149,12 +163,25 @@
             trackerButton.innerHTML = `<span>00:00:00 - ${tracker.name}</span>`;
             trackerButton.addEventListener('click', () => handleTrackerClick(tracker));
 
+            const editButton = document.createElement('button');
+            editButton.className = 'edit-button';
+            editButton.textContent = '\u270e';
+            editButton.addEventListener('click', () => {
+                const newName = prompt('Enter tracker name:', tracker.name);
+                if (newName) {
+                    tracker.name = newName;
+                    updateTrackerText(tracker);
+                    saveTrackersToLocalStorage();
+                }
+            });
+
             const removeButton = document.createElement('button');
             removeButton.className = 'remove-button';
-            removeButton.textContent = 'Remove';
+            removeButton.textContent = '\u2715';
             removeButton.addEventListener('click', () => handleRemoveTracker(tracker));
 
             tracker.element.appendChild(trackerButton);
+            tracker.element.appendChild(editButton);
             tracker.element.appendChild(removeButton);
 
             tracker.button = trackerButton;
