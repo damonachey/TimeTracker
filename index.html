@@ -10,20 +10,30 @@
             margin: 20px;
             background-color: #f5f5f5;
         }
-        #add-tracker, #reset-trackers {
-            display: inline-block;
-            margin: 5px;
-            padding: 10px;
+        .button-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+        #add-tracker {
+            padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
             border-radius: 5px;
             background-color: #4a90e2;
             color: white;
             border: none;
+            margin-right: auto;
         }
         #reset-trackers {
             background-color: #e8e8e8;
             color: #333;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
         }
         button {
             display: block;
@@ -64,8 +74,10 @@
 </head>
 <body>
     <h1>Time Tracker</h1>
-    <button id="add-tracker">+ Add Tracker</button>
-    <button id="reset-trackers" style="float: right;">Reset All</button>
+    <div class="button-container">
+        <button id="add-tracker">+ Add Tracker</button>
+        <button id="reset-trackers">Reset All</button>
+    </div>
     <div id="trackers-container"></div>
 
     <script>
